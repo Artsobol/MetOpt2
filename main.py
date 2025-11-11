@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+# Преобразует строку в выражение
 _ALLOWED_NAMES = {
     'sin': np.sin, 'cos': np.cos, 'tan': np.tan, 'arcsin': np.arcsin, 'arccos': np.arccos, 'arctan': np.arctan,
     'sinh': np.sinh, 'cosh': np.cosh, 'tanh': np.tanh,
@@ -16,6 +17,7 @@ _ALLOWED_NAMES = {
     'sign': np.sign,
 }
 
+# Парсинг выражения
 def parse_function(expr: str) -> Callable[[np.ndarray], np.ndarray]:
     expr = expr.strip()
     m = re.match(r'^\s*f\s*\(\s*x\s*\)\s*=\s*(.*)$', expr, flags=re.IGNORECASE)
@@ -33,6 +35,7 @@ def parse_function(expr: str) -> Callable[[np.ndarray], np.ndarray]:
 
     return f
 
+# Класс для вывода результата
 @dataclass
 class PSResult:
     x_min: float
@@ -44,10 +47,8 @@ class PSResult:
     fs: List[float]
     L_used: float
 
+# Глобальный поиск минимума липшицевой функции на [a,b]
 class PiyavskiiShubert:
-    """
-    Глобальный поиск минимума липшицевой функции на [a,b]
-    """
     def __init__(self, L: Optional[float] = None, r: float = 1.2):
         self.L = L
         self.r = r
@@ -144,6 +145,7 @@ class PiyavskiiShubert:
             L_used=float(L),
         )
 
+# Создание графика
 def plot_result(
     f: Callable[[np.ndarray], np.ndarray],
     a: float, b: float,
@@ -174,6 +176,7 @@ def plot_result(
     plt.tight_layout()
     plt.show()
 
+# Принимает выражение, вызывает метод с основной логикой и полученный результат передает в функцию построения графика
 def run_optimizer_from_string(
     expr: str, a: float, b: float, eps: float,
     L: Optional[float] = None, max_iters: int = 2000, r: float = 1.2,
@@ -188,7 +191,7 @@ def run_optimizer_from_string(
     print(f"Итераций: {res.iters}, вызовов f: {res.evals}, время: {res.elapsed_sec:.4f} с, L: {res.L_used:.6g}")
     return res
 
-
+# Вызов готовых функций
 def _demo(which: str):
     if which.lower() == "rastrigin":
         run_optimizer_from_string("10 + x**2 - 10*cos(2*pi*x)", -4.0, 4.0, eps=5e-3, L=None, title="График")
